@@ -30,3 +30,7 @@ coverage/
 tmp/
 temp/
 *.tmp
+
+
+#SUPABASE PWD: L&ipmGxc*#htg8w
+.supabase/

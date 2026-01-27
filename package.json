@@ -15,5 +15,11 @@
     "2026"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "supabase": "^2.72.8"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.93.1"
+  }
 }
