@@ -1,6 +1,6 @@
 # World Cup Picks 🏆⚽
 
-A webapp for betting on the 2026 World Cup with your friends!
+A web application for betting on the 2026 World Cup with your friends!
 
 ## Features
 

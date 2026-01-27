@@ -1,7 +1,7 @@
 {
   "name": "world-cup-picks",
   "version": "1.0.0",
-  "description": "A webapplication for betting on the 2026 world cup with your friends!",
+  "description": "A web application for betting on the 2026 world cup with your friends!",
   "main": "src/index.js",
   "scripts": {
     "start": "node examples/basic-usage.js",
