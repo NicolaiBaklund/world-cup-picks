@@ -19,6 +19,7 @@ import { ProfilePage } from '@/features/profile/ProfilePage'
 import { UserProfilePage } from '@/features/profile/UserProfilePage'
 import { StatsPage } from '@/features/stats/StatsPage'
 import { NotificationsPage } from '@/features/notifications/NotificationsPage'
+import { NotFoundPage } from '@/features/NotFoundPage'
 
 export const routes: RouteObject[] = [
   // Auth routes (no navbar, centered layout)
@@ -51,6 +52,7 @@ export const routes: RouteObject[] = [
           { path: '/profile/:id', element: <UserProfilePage /> },
           { path: '/stats', element: <StatsPage /> },
           { path: '/notifications', element: <NotificationsPage /> },
+          { path: '*', element: <NotFoundPage /> },
         ],
       },
     ],
