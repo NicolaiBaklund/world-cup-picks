@@ -50,7 +50,7 @@ export function MatchesPage() {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3">
-        <Select value={stage} onValueChange={setStage}>
+        <Select value={stage} onValueChange={(v) => v != null && setStage(v)}>
           <SelectTrigger className="w-[160px]">
             <SelectValue />
           </SelectTrigger>
@@ -62,7 +62,7 @@ export function MatchesPage() {
         </Select>
 
         {stage === 'group' && (
-          <Select value={group} onValueChange={setGroup}>
+          <Select value={group} onValueChange={(v) => v != null && setGroup(v)}>
             <SelectTrigger className="w-[140px]">
               <SelectValue />
             </SelectTrigger>
@@ -74,7 +74,7 @@ export function MatchesPage() {
           </Select>
         )}
 
-        <Select value={status} onValueChange={setStatus}>
+        <Select value={status} onValueChange={(v) => v != null && setStatus(v)}>
           <SelectTrigger className="w-[140px]">
             <SelectValue />
           </SelectTrigger>

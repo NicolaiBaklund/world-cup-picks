@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from './useAuth'
-import type { Bet, BetPrediction } from '@/types'
+import type { Bet, BetPrediction, UserBetDetailed } from '@/types'
 
 const BETS_KEY = 'bets'
 
@@ -17,7 +17,7 @@ export function useMyBetsForMatch(matchId: string) {
         .eq('match_id', matchId)
         .eq('user_id', user!.id)
       if (error) throw error
-      return data as (Bet & { leagues: { name: string } })[]
+      return data as unknown as (Bet & { leagues: { name: string } })[]
     },
     enabled: !!user && !!matchId,
   })
@@ -72,7 +72,7 @@ export function useMyBetsInLeague(leagueId: string) {
         .eq('user_id', user!.id)
         .order('match_date', { ascending: false })
       if (error) throw error
-      return data
+      return data as UserBetDetailed[]
     },
     enabled: !!user && !!leagueId,
   })
@@ -90,7 +90,7 @@ export function useAllMyBets() {
         .eq('user_id', user!.id)
         .order('match_date', { ascending: false })
       if (error) throw error
-      return data
+      return data as UserBetDetailed[]
     },
     enabled: !!user,
   })

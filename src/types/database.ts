@@ -2,6 +2,7 @@
 // npx supabase gen types typescript --local > src/types/database.ts
 //
 // For now, we define the shape manually to unblock development.
+// Using permissive Insert/Update types since we don't have generated types.
 
 export type Database = {
   public: {
@@ -24,8 +25,9 @@ export type Database = {
           created_at: string
           updated_at: string
         }
-        Insert: Omit<Database['public']['Tables']['nations']['Row'], 'id' | 'created_at' | 'updated_at' | 'played' | 'won' | 'drawn' | 'lost' | 'goals_for' | 'goals_against' | 'points'>
-        Update: Partial<Database['public']['Tables']['nations']['Insert']>
+        Insert: Record<string, unknown>
+        Update: Record<string, unknown>
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -36,12 +38,12 @@ export type Database = {
           total_bets: number
           correct_bets: number
           total_points: number
-          notification_preferences: Record<string, boolean> | null
           created_at: string
           updated_at: string
         }
-        Insert: Pick<Database['public']['Tables']['profiles']['Row'], 'id' | 'username'>
-        Update: Partial<Omit<Database['public']['Tables']['profiles']['Row'], 'id' | 'created_at'>>
+        Insert: Record<string, unknown>
+        Update: Record<string, unknown>
+        Relationships: []
       }
       leagues: {
         Row: {
@@ -59,12 +61,12 @@ export type Database = {
           created_at: string
           updated_at: string
         }
-        Insert: Omit<Database['public']['Tables']['leagues']['Row'], 'id' | 'code' | 'created_at' | 'updated_at' | 'points_for_correct' | 'points_for_wrong' | 'points_for_exact_score'>
-        Update: Partial<Omit<Database['public']['Tables']['leagues']['Row'], 'id' | 'code' | 'creator_id' | 'created_at'>>
+        Insert: Record<string, unknown>
+        Update: Record<string, unknown>
+        Relationships: []
       }
       league_members: {
         Row: {
-          id: string
           league_id: string
           user_id: string
           role: 'admin' | 'member'
@@ -73,31 +75,34 @@ export type Database = {
           league_total_bets: number
           joined_at: string
         }
-        Insert: Pick<Database['public']['Tables']['league_members']['Row'], 'league_id' | 'user_id'>
-        Update: Partial<Omit<Database['public']['Tables']['league_members']['Row'], 'id' | 'league_id' | 'user_id' | 'joined_at'>>
+        Insert: Record<string, unknown>
+        Update: Record<string, unknown>
+        Relationships: []
       }
       matches: {
         Row: {
           id: string
           home_team_id: string
           away_team_id: string
+          match_number: number | null
           date: string
-          stage: 'group' | 'round-of-32' | 'round-of-16' | 'quarter-final' | 'semi-final' | 'third-place' | 'final'
+          stage: string
           group_name: string | null
           venue: string | null
           city: string | null
-          status: 'scheduled' | 'live' | 'completed' | 'postponed' | 'cancelled'
+          status: string
           home_score: number | null
           away_score: number | null
           home_penalties: number | null
           away_penalties: number | null
-          winner: 'home' | 'away' | 'draw' | null
+          winner: string | null
           betting_deadline: string | null
           created_at: string
           updated_at: string
         }
-        Insert: Omit<Database['public']['Tables']['matches']['Row'], 'id' | 'created_at' | 'updated_at' | 'winner' | 'home_score' | 'away_score' | 'home_penalties' | 'away_penalties'>
-        Update: Partial<Database['public']['Tables']['matches']['Row']>
+        Insert: Record<string, unknown>
+        Update: Record<string, unknown>
+        Relationships: []
       }
       bets: {
         Row: {
@@ -105,7 +110,7 @@ export type Database = {
           user_id: string
           match_id: string
           league_id: string
-          predicted_winner: 'home' | 'away' | 'draw'
+          predicted_winner: string
           predicted_home_score: number | null
           predicted_away_score: number | null
           is_correct: boolean | null
@@ -114,27 +119,47 @@ export type Database = {
           created_at: string
           updated_at: string
         }
-        Insert: Pick<Database['public']['Tables']['bets']['Row'], 'match_id' | 'league_id' | 'predicted_winner'> & { predicted_home_score?: number | null; predicted_away_score?: number | null }
-        Update: Partial<Pick<Database['public']['Tables']['bets']['Row'], 'predicted_winner' | 'predicted_home_score' | 'predicted_away_score'>>
+        Insert: Record<string, unknown>
+        Update: Record<string, unknown>
+        Relationships: []
       }
       match_events: {
         Row: {
           id: string
           match_id: string
-          event_type: 'goal' | 'own_goal' | 'penalty_goal' | 'penalty_miss' | 'yellow_card' | 'red_card' | 'substitution'
+          event_type: string
           minute: number
           player_name: string | null
           team_id: string
           details: Record<string, unknown> | null
           created_at: string
         }
-        Insert: Omit<Database['public']['Tables']['match_events']['Row'], 'id' | 'created_at'>
-        Update: Partial<Database['public']['Tables']['match_events']['Insert']>
+        Insert: Record<string, unknown>
+        Update: Record<string, unknown>
+        Relationships: []
       }
     }
     Views: {
       matches_with_teams: {
-        Row: Database['public']['Tables']['matches']['Row'] & {
+        Row: {
+          id: string
+          home_team_id: string
+          away_team_id: string
+          match_number: number | null
+          date: string
+          stage: string
+          group_name: string | null
+          venue: string | null
+          city: string | null
+          status: string
+          home_score: number | null
+          away_score: number | null
+          home_penalties: number | null
+          away_penalties: number | null
+          winner: string | null
+          betting_deadline: string | null
+          created_at: string
+          updated_at: string
           home_team_name: string
           home_team_code: string
           home_team_flag: string
@@ -142,31 +167,86 @@ export type Database = {
           away_team_code: string
           away_team_flag: string
         }
+        Relationships: []
+      }
+      user_bets_detailed: {
+        Row: {
+          bet_id: string
+          user_id: string
+          league_id: string
+          predicted_winner: string
+          is_correct: boolean | null
+          points_earned: number
+          bet_created_at: string
+          evaluated_at: string | null
+          match_id: string
+          match_date: string
+          stage: string
+          match_status: string
+          home_score: number | null
+          away_score: number | null
+          actual_winner: string | null
+          betting_deadline: string | null
+          home_team_name: string
+          home_team_code: string
+          home_team_flag: string
+          away_team_name: string
+          away_team_code: string
+          away_team_flag: string
+          league_name: string
+        }
+        Relationships: []
       }
       group_standings: {
-        Row: Database['public']['Tables']['nations']['Row'] & {
+        Row: {
+          group_name: string
+          id: string
+          name: string
+          code: string
+          flag: string
+          played: number
+          won: number
+          drawn: number
+          lost: number
+          goals_for: number
+          goals_against: number
           goal_difference: number
-          rank: number
+          points: number
+          position: number
         }
+        Relationships: []
+      }
+      upcoming_matches: {
+        Row: Database['public']['Views']['matches_with_teams']['Row']
+        Relationships: []
+      }
+      live_matches: {
+        Row: Database['public']['Views']['matches_with_teams']['Row']
+        Relationships: []
+      }
+      recent_results: {
+        Row: Database['public']['Views']['matches_with_teams']['Row']
+        Relationships: []
       }
     }
     Functions: {
       get_league_leaderboard: {
-        Args: { league_id_input: string }
+        Args: { league_uuid: string }
         Returns: {
+          rank: number
           user_id: string
           username: string
           display_name: string | null
           avatar_url: string | null
-          total_points: number
+          points: number
           correct_bets: number
           total_bets: number
           accuracy: number
-          rank: number
         }[]
       }
     }
     Enums: Record<string, never>
+    CompositeTypes: Record<string, never>
   }
 }
 
@@ -179,5 +259,6 @@ export type Match = Database['public']['Tables']['matches']['Row']
 export type Bet = Database['public']['Tables']['bets']['Row']
 export type MatchEvent = Database['public']['Tables']['match_events']['Row']
 export type MatchWithTeams = Database['public']['Views']['matches_with_teams']['Row']
+export type UserBetDetailed = Database['public']['Views']['user_bets_detailed']['Row']
 export type GroupStanding = Database['public']['Views']['group_standings']['Row']
 export type LeaderboardEntry = Database['public']['Functions']['get_league_leaderboard']['Returns'][number]

@@ -16,8 +16,9 @@ export function useMyLeagues() {
         .select('league_id, role, leagues(*)')
         .eq('user_id', user!.id)
       if (error) throw error
-      return data.map((m) => ({
-        ...m.leagues as League,
+      const rows = data as unknown as { league_id: string; role: string; leagues: League }[]
+      return rows.map((m) => ({
+        ...m.leagues,
         role: m.role,
       }))
     },

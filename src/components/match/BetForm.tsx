@@ -92,7 +92,7 @@ export function BetForm({ match }: BetFormProps) {
         <CardTitle className="text-base">Place Your Bet</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Select value={selectedLeague} onValueChange={setSelectedLeague}>
+        <Select value={selectedLeague} onValueChange={(v) => v != null && setSelectedLeague(v)}>
           <SelectTrigger>
             <SelectValue placeholder="Select league" />
           </SelectTrigger>

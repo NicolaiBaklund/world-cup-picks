@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import { Trophy, Calendar, Users, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { MatchList } from '@/components/match/MatchList'
 import { useLiveMatches, useUpcomingMatches, useRecentResults } from '@/hooks/useMatches'
 import { useAuth } from '@/hooks/useAuth'

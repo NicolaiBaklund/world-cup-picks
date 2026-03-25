@@ -8,6 +8,7 @@ export type {
   Bet,
   MatchEvent,
   MatchWithTeams,
+  UserBetDetailed,
   GroupStanding,
   LeaderboardEntry,
 } from './database'

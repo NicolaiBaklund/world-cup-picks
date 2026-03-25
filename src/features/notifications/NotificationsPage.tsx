@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import { format } from 'date-fns'
 import { Clock, Trophy, Bell } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useUpcomingMatches } from '@/hooks/useMatches'
 import { useMyLeagues } from '@/hooks/useLeagues'
