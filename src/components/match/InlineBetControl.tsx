@@ -96,21 +96,23 @@ export function InlineBetControl({ match, leagueId }: InlineBetControlProps) {
   const onAway = (v: number) => { touched.current = true; setAwayScore(v) }
 
   return (
-    <div className="flex items-center justify-center gap-4 border-t pt-3">
-      <ScoreStepper
-        label={match.home_team_code}
-        flag={match.home_team_flag}
-        value={homeScore}
-        onChange={onHome}
-      />
-      <span className="text-xl font-bold text-muted-foreground">–</span>
-      <ScoreStepper
-        label={match.away_team_code}
-        flag={match.away_team_flag}
-        value={awayScore}
-        onChange={onAway}
-      />
-      <span className="flex h-5 w-12 items-center justify-center text-xs text-muted-foreground">
+    <div className="relative border-t pt-3">
+      <div className="flex items-center justify-center gap-4">
+        <ScoreStepper
+          label={match.home_team_code}
+          flag={match.home_team_flag}
+          value={homeScore}
+          onChange={onHome}
+        />
+        <span className="text-xl font-bold text-muted-foreground">–</span>
+        <ScoreStepper
+          label={match.away_team_code}
+          flag={match.away_team_flag}
+          value={awayScore}
+          onChange={onAway}
+        />
+      </div>
+      <span className="absolute right-0 top-3 flex h-full items-center text-xs text-muted-foreground">
         {placeBet.isPending ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : justSaved ? (

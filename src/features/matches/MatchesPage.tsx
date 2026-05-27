@@ -93,20 +93,6 @@ export function MatchesPage() {
             ))}
           </SelectContent>
         </Select>
-
-        {/* League to bet in (drives inline steppers) */}
-        {!!leagues?.length && (
-          <Select value={betLeague} onValueChange={(v) => v != null && setBetLeague(v)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Bet in league" />
-            </SelectTrigger>
-            <SelectContent>
-              {leagues.map((l) => (
-                <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
       </div>
 
       {!leagues?.length && (
