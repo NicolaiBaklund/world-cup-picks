@@ -158,11 +158,12 @@ WC2026 API ──poll──► Supabase Edge Function (cron) ──upsert──�
 ### Phase 2b — Nations browse + profiles (non-blocking, parallel)
 Schema ready (migration 00010). Content is editorial — fill manually over time.
 - [x] DB schema: nation profile fields + `nation_heroes`
-- [ ] `/nations` index page — scrollable grid of all 48 (flag, name, group)
-- [ ] Enrich [NationDetailPage](src/features/nations/NationDetailPage.tsx): bio, home stadium, WC appearances/titles, FIFA rank
-- [ ] Heroes section (photos) from `nation_heroes`
-- [ ] Flag images (`flag_url`) with emoji `flag` fallback
-- [ ] Populate editorial content + hero photos (manual, ongoing)
+- [x] `/nations` index page — scrollable grid of all 48 (flag, name, group) + nav item
+- [x] Enrich [NationDetailPage](src/features/nations/NationDetailPage.tsx): bio, nickname, home stadium, WC appearances/titles, FIFA rank
+- [x] Heroes (Legends) section from `nation_heroes`
+- [x] Flag emoji set for all 48 + `flag_url` image support with emoji fallback
+- [x] Seed editorial content (bio, stadium, WC stats) + 1–2 heroes each ([seed_nation_profiles.sql](supabase/seed_nation_profiles.sql))
+- [ ] Add hero photos (`photo_url`) + flag images (`flag_url`) — optional polish
 
 ### Phase 5 — Post-launch / nice-to-have
 - [ ] Code-splitting to shrink bundle
