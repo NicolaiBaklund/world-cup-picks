@@ -131,7 +131,8 @@ WC2026 API ──poll──► Supabase Edge Function (cron) ──upsert──�
 
 > API notes: undecided teams come back as `null` (no "Winner Group A" label). `round_of_32` currently empty — knockout fixtures appear incrementally. Match objects carry `home_team_id` (= `external_id`), inline code/flag, `stadium`, `home_pen`/`away_pen`.
 - [ ] Verify flags/codes render; backfill flags not in API (`flag_url` is null from API)
-- [ ] Write `sync-scores` poller; schedule incremental sync (scores/status)
+- [x] Daily cron (00012): `pg_cron` + `pg_net` invoke `sync-matches` at 05:00 UTC — handles scores, knockout resolution, new fixtures
+- [ ] Add tighter in-match polling schedule near kickoff (needs Pro API key for Free-tier 100/day headroom)
 
 ### Phase 2 — Exact-score scoring (LOCKED model)
 - [ ] Rewrite `evaluate_match_bets` with tiered points (exact 3 / result 1 / wrong 0)
