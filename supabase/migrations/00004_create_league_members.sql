@@ -54,3 +54,12 @@ CREATE POLICY "Users can leave or admins can remove"
       SELECT 1 FROM leagues WHERE id = league_members.league_id AND creator_id = auth.uid()
     )
   );
+
+-- Deferred from 00003: needs league_members to exist
+CREATE POLICY "Public leagues are viewable by everyone"
+  ON leagues FOR SELECT
+  USING (
+    is_public = true
+    OR creator_id = auth.uid()
+    OR EXISTS (SELECT 1 FROM league_members WHERE league_id = id AND user_id = auth.uid())
+  );

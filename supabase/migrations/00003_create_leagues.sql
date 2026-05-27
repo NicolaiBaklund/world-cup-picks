@@ -49,13 +49,7 @@ CREATE TRIGGER generate_league_code_trigger
 
 ALTER TABLE leagues ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public leagues are viewable by everyone"
-  ON leagues FOR SELECT
-  USING (
-    is_public = true
-    OR creator_id = auth.uid()
-    OR EXISTS (SELECT 1 FROM league_members WHERE league_id = id AND user_id = auth.uid())
-  );
+-- NOTE: SELECT policy moved to 00004 (needs league_members table)
 
 CREATE POLICY "Authenticated users can create leagues"
   ON leagues FOR INSERT WITH CHECK (auth.uid() = creator_id);
