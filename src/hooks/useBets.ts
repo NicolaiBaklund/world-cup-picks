@@ -32,10 +32,14 @@ export function usePlaceBet() {
       matchId,
       leagueId,
       predictedWinner,
+      predictedHomeScore,
+      predictedAwayScore,
     }: {
       matchId: string
       leagueId: string
       predictedWinner: BetPrediction
+      predictedHomeScore: number
+      predictedAwayScore: number
     }) => {
       const { data, error } = await supabase
         .from('bets')
@@ -45,6 +49,8 @@ export function usePlaceBet() {
             match_id: matchId,
             league_id: leagueId,
             predicted_winner: predictedWinner,
+            predicted_home_score: predictedHomeScore,
+            predicted_away_score: predictedAwayScore,
           },
           { onConflict: 'user_id,match_id,league_id' }
         )

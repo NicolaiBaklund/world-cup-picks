@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { usePlaceBet, useMyBetsForMatch } from '@/hooks/useBets'
 import { useMyLeagues } from '@/hooks/useLeagues'
+import { ScoreStepper, winnerFromScore } from './ScoreStepper'
 import { toast } from 'sonner'
-import type { MatchWithTeams, BetPrediction } from '@/types'
+import type { MatchWithTeams } from '@/types'
 
 interface BetFormProps {
   match: MatchWithTeams
@@ -13,7 +14,8 @@ interface BetFormProps {
 
 export function BetForm({ match }: BetFormProps) {
   const [selectedLeague, setSelectedLeague] = useState<string>('')
-  const [prediction, setPrediction] = useState<BetPrediction | ''>('')
+  const [homeScore, setHomeScore] = useState(0)
+  const [awayScore, setAwayScore] = useState(0)
   const { data: leagues } = useMyLeagues()
   const { data: myBets } = useMyBetsForMatch(match.id)
   const placeBet = usePlaceBet()
@@ -33,10 +35,8 @@ export function BetForm({ match }: BetFormProps) {
               {myBets.map((bet) => (
                 <div key={bet.id} className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">{bet.leagues.name}</span>
-                  <span className="font-medium">
-                    {bet.predicted_winner === 'home' && match.home_team_name}
-                    {bet.predicted_winner === 'away' && match.away_team_name}
-                    {bet.predicted_winner === 'draw' && 'Draw'}
+                  <span className="font-medium tabular-nums">
+                    {bet.predicted_home_score ?? '–'}–{bet.predicted_away_score ?? '–'}
                     {bet.is_correct !== null && (
                       <span className={bet.is_correct ? 'text-green-600 ml-2' : 'text-red-500 ml-2'}>
                         {bet.is_correct ? `+${bet.points_earned}` : '0'}
@@ -67,16 +67,17 @@ export function BetForm({ match }: BetFormProps) {
   }
 
   const handleSubmit = async () => {
-    if (!selectedLeague || !prediction) return
+    if (!selectedLeague) return
 
     try {
       await placeBet.mutateAsync({
         matchId: match.id,
         leagueId: selectedLeague,
-        predictedWinner: prediction,
+        predictedWinner: winnerFromScore(homeScore, awayScore),
+        predictedHomeScore: homeScore,
+        predictedAwayScore: awayScore,
       })
       toast.success('Bet placed!')
-      setPrediction('')
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Failed to place bet'
       toast.error(msg)
@@ -107,45 +108,35 @@ export function BetForm({ match }: BetFormProps) {
           <>
             {existingBet && (
               <p className="text-sm text-muted-foreground">
-                Current bet: <span className="font-medium">
-                  {existingBet.predicted_winner === 'home' && match.home_team_name}
-                  {existingBet.predicted_winner === 'away' && match.away_team_name}
-                  {existingBet.predicted_winner === 'draw' && 'Draw'}
+                Current bet:{' '}
+                <span className="font-medium tabular-nums">
+                  {existingBet.predicted_home_score ?? '–'}–{existingBet.predicted_away_score ?? '–'}
                 </span>
               </p>
             )}
 
-            <div className="grid grid-cols-3 gap-2">
-              <Button
-                variant={prediction === 'home' ? 'default' : 'outline'}
-                onClick={() => setPrediction('home')}
-                className="flex flex-col gap-1 h-auto py-3"
-              >
-                <span className="text-lg">{match.home_team_flag}</span>
-                <span className="text-xs">{match.home_team_code}</span>
-              </Button>
-              <Button
-                variant={prediction === 'draw' ? 'default' : 'outline'}
-                onClick={() => setPrediction('draw')}
-                className="flex flex-col gap-1 h-auto py-3"
-              >
-                <span className="text-lg">-</span>
-                <span className="text-xs">Draw</span>
-              </Button>
-              <Button
-                variant={prediction === 'away' ? 'default' : 'outline'}
-                onClick={() => setPrediction('away')}
-                className="flex flex-col gap-1 h-auto py-3"
-              >
-                <span className="text-lg">{match.away_team_flag}</span>
-                <span className="text-xs">{match.away_team_code}</span>
-              </Button>
+            <div className="flex items-center justify-center gap-6">
+              <ScoreStepper
+                label={match.home_team_code}
+                flag={match.home_team_flag}
+                value={homeScore}
+                onChange={setHomeScore}
+                disabled={placeBet.isPending}
+              />
+              <span className="text-2xl font-bold text-muted-foreground">–</span>
+              <ScoreStepper
+                label={match.away_team_code}
+                flag={match.away_team_flag}
+                value={awayScore}
+                onChange={setAwayScore}
+                disabled={placeBet.isPending}
+              />
             </div>
 
             <Button
               className="w-full"
               onClick={handleSubmit}
-              disabled={!prediction || placeBet.isPending}
+              disabled={placeBet.isPending}
             >
               {placeBet.isPending ? 'Placing...' : existingBet ? 'Update Bet' : 'Place Bet'}
             </Button>
