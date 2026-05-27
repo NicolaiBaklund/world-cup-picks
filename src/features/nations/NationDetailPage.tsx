@@ -5,13 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { MatchList } from '@/components/match/MatchList'
-import { useNation } from '@/hooks/useNations'
+import { useNation, useNationHeroes } from '@/hooks/useNations'
 import { useAllMatches } from '@/hooks/useMatches'
 import type { MatchWithTeams } from '@/types'
 
 export function NationDetailPage() {
   const { id } = useParams()
   const { data: nation, isLoading } = useNation(id!)
+  const { data: heroes } = useNationHeroes(id!)
   const { data: allMatches, isLoading: matchesLoading } = useAllMatches()
 
   // Filter matches for this nation
@@ -45,15 +46,89 @@ export function NationDetailPage() {
       {/* Nation header */}
       <Card>
         <CardContent className="p-6 text-center">
-          <div className="text-6xl mb-4">{nation.flag}</div>
+          {nation.flag_url ? (
+            <img
+              src={nation.flag_url}
+              alt={`${nation.name} flag`}
+              className="mx-auto mb-4 h-16 w-24 rounded object-cover shadow"
+            />
+          ) : (
+            <div className="text-6xl mb-4">{nation.flag}</div>
+          )}
           <h1 className="text-3xl font-bold">{nation.name}</h1>
-          <div className="flex items-center justify-center gap-2 mt-2">
+          {nation.nickname && (
+            <p className="text-muted-foreground italic mt-1">{nation.nickname}</p>
+          )}
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
             <Badge variant="outline">{nation.code}</Badge>
             {nation.group_name && <Badge variant="secondary">Group {nation.group_name}</Badge>}
             {nation.confederation && <Badge variant="secondary">{nation.confederation}</Badge>}
+            {nation.fifa_ranking && <Badge variant="secondary">FIFA #{nation.fifa_ranking}</Badge>}
           </div>
         </CardContent>
       </Card>
+
+      {/* About */}
+      {(nation.bio || nation.home_stadium || nation.wc_appearances > 0) && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">About</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {nation.bio && <p className="text-sm leading-relaxed">{nation.bio}</p>}
+            <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
+              {nation.wc_appearances > 0 && (
+                <Stat label="WC Appearances" value={nation.wc_appearances} />
+              )}
+              <Stat label="WC Titles" value={nation.wc_titles} />
+              {nation.best_finish && <Stat label="Best Finish" value={nation.best_finish} />}
+              {nation.home_stadium && (
+                <Stat
+                  label="Home Stadium"
+                  value={nation.home_stadium}
+                  sub={nation.home_stadium_city ?? undefined}
+                />
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Heroes */}
+      {(heroes?.length ?? 0) > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Legends</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {heroes!.map((hero) => (
+              <div key={hero.id} className="flex gap-3">
+                {hero.photo_url && (
+                  <img
+                    src={hero.photo_url}
+                    alt={hero.name}
+                    className="h-14 w-14 rounded-full object-cover"
+                  />
+                )}
+                <div>
+                  <p className="font-medium">
+                    {hero.name}
+                    {hero.position && (
+                      <span className="text-muted-foreground font-normal"> · {hero.position}</span>
+                    )}
+                    {hero.years_active && (
+                      <span className="text-muted-foreground font-normal"> · {hero.years_active}</span>
+                    )}
+                  </p>
+                  {hero.description && (
+                    <p className="text-sm text-muted-foreground">{hero.description}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats */}
       <Card>
@@ -111,6 +186,16 @@ export function NationDetailPage() {
           <MatchList matches={completedMatches} isLoading={matchesLoading} />
         </section>
       )}
+    </div>
+  )
+}
+
+function Stat({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
+  return (
+    <div>
+      <p className="text-base font-semibold leading-tight">{value}</p>
+      {sub && <p className="text-xs text-muted-foreground">{sub}</p>}
+      <p className="text-xs text-muted-foreground">{label}</p>
     </div>
   )
 }

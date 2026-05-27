@@ -22,6 +22,7 @@ const navItems = [
   { to: '/matches', label: 'Matches', icon: Trophy },
   { to: '/calendar', label: 'Calendar', icon: Calendar },
   { to: '/groups', label: 'Groups', icon: Globe },
+  { to: '/nations', label: 'Nations', icon: Flag },
   { to: '/leagues', label: 'Leagues', icon: Users },
   { to: '/stats', label: 'Stats', icon: BarChart3 },
 ]

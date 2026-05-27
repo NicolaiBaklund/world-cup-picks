@@ -1,6 +1,7 @@
 export type {
   Database,
   Nation,
+  NationHero,
   Profile,
   League,
   LeagueMember,

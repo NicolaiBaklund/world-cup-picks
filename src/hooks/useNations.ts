@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
-import type { Nation, GroupStanding } from '@/types'
+import type { Nation, NationHero, GroupStanding } from '@/types'
 
 const NATIONS_KEY = 'nations'
 
@@ -45,5 +45,21 @@ export function useNation(id: string) {
       return data as Nation
     },
     enabled: !!id,
+  })
+}
+
+export function useNationHeroes(nationId: string) {
+  return useQuery({
+    queryKey: [NATIONS_KEY, nationId, 'heroes'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('nation_heroes')
+        .select('*')
+        .eq('nation_id', nationId)
+        .order('sort_order')
+      if (error) throw error
+      return data as NationHero[]
+    },
+    enabled: !!nationId,
   })
 }

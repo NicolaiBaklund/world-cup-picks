@@ -10,6 +10,7 @@ import { MatchesPage } from '@/features/matches/MatchesPage'
 import { MatchDetailPage } from '@/features/matches/MatchDetailPage'
 import { CalendarPage } from '@/features/calendar/CalendarPage'
 import { GroupStandingsPage } from '@/features/groups/GroupStandingsPage'
+import { NationsPage } from '@/features/nations/NationsPage'
 import { NationDetailPage } from '@/features/nations/NationDetailPage'
 import { LeaguesPage } from '@/features/leagues/LeaguesPage'
 import { CreateLeaguePage } from '@/features/leagues/CreateLeaguePage'
@@ -43,6 +44,7 @@ export const routes: RouteObject[] = [
           { path: '/matches/:id', element: <MatchDetailPage /> },
           { path: '/calendar', element: <CalendarPage /> },
           { path: '/groups', element: <GroupStandingsPage /> },
+          { path: '/nations', element: <NationsPage /> },
           { path: '/nations/:id', element: <NationDetailPage /> },
           { path: '/leagues', element: <LeaguesPage /> },
           { path: '/leagues/create', element: <CreateLeaguePage /> },
