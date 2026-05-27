@@ -22,6 +22,35 @@ export type Database = {
           goals_for: number
           goals_against: number
           points: number
+          // Sync + editorial profile (migration 00010)
+          external_id: number | null
+          flag_url: string | null
+          nickname: string | null
+          bio: string | null
+          fifa_ranking: number | null
+          home_stadium: string | null
+          home_stadium_city: string | null
+          wc_appearances: number
+          wc_titles: number
+          best_finish: string | null
+          first_wc_year: number | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: Record<string, unknown>
+        Update: Record<string, unknown>
+        Relationships: []
+      }
+      nation_heroes: {
+        Row: {
+          id: string
+          nation_id: string
+          name: string
+          position: string | null
+          years_active: string | null
+          description: string | null
+          photo_url: string | null
+          sort_order: number
           created_at: string
           updated_at: string
         }
@@ -252,6 +281,7 @@ export type Database = {
 
 // Convenience type aliases
 export type Nation = Database['public']['Tables']['nations']['Row']
+export type NationHero = Database['public']['Tables']['nation_heroes']['Row']
 export type Profile = Database['public']['Tables']['profiles']['Row']
 export type League = Database['public']['Tables']['leagues']['Row']
 export type LeagueMember = Database['public']['Tables']['league_members']['Row']
