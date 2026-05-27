@@ -2,11 +2,14 @@ import { Link } from 'react-router'
 import { format } from 'date-fns'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { InlineBetControl } from './InlineBetControl'
 import type { MatchWithTeams } from '@/types'
 
 interface MatchCardProps {
   match: MatchWithTeams
   compact?: boolean
+  /** When set, renders an inline bet stepper for this league below the match. */
+  betLeagueId?: string
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -25,13 +28,13 @@ function StatusBadge({ status }: { status: string }) {
   )
 }
 
-export function MatchCard({ match, compact }: MatchCardProps) {
+export function MatchCard({ match, compact, betLeagueId }: MatchCardProps) {
   const matchDate = new Date(match.date)
 
   return (
-    <Link to={`/matches/${match.id}`}>
-      <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
-        <CardContent className={compact ? 'p-3' : 'p-4'}>
+    <Card className="transition-colors">
+      <CardContent className={compact ? 'p-3' : 'p-4'}>
+        <Link to={`/matches/${match.id}`} className="block hover:opacity-80 transition-opacity">
           {/* Header: stage + status */}
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-muted-foreground uppercase">
@@ -79,8 +82,15 @@ export function MatchCard({ match, compact }: MatchCardProps) {
               {match.venue && <span>{match.venue}, {match.city}</span>}
             </div>
           )}
-        </CardContent>
-      </Card>
-    </Link>
+        </Link>
+
+        {/* Inline betting (matches page) */}
+        {betLeagueId && (
+          <div className="mt-3">
+            <InlineBetControl match={match} leagueId={betLeagueId} />
+          </div>
+        )}
+      </CardContent>
+    </Card>
   )
 }

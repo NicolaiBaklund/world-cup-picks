@@ -7,9 +7,11 @@ interface MatchListProps {
   isLoading: boolean
   emptyMessage?: string
   compact?: boolean
+  /** When set, each card shows an inline bet stepper for this league. */
+  betLeagueId?: string
 }
 
-export function MatchList({ matches, isLoading, emptyMessage = 'No matches found', compact }: MatchListProps) {
+export function MatchList({ matches, isLoading, emptyMessage = 'No matches found', compact, betLeagueId }: MatchListProps) {
   if (isLoading) {
     return (
       <div className="space-y-3">
@@ -31,7 +33,7 @@ export function MatchList({ matches, isLoading, emptyMessage = 'No matches found
   return (
     <div className="space-y-3">
       {matches.map((match) => (
-        <MatchCard key={match.id} match={match} compact={compact} />
+        <MatchCard key={match.id} match={match} compact={compact} betLeagueId={betLeagueId} />
       ))}
     </div>
   )

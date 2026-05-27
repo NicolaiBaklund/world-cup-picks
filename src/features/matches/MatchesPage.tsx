@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { MatchList } from '@/components/match/MatchList'
 import { useAllMatches } from '@/hooks/useMatches'
+import { useMyLeagues } from '@/hooks/useLeagues'
 
 const STAGES = [
   { value: 'all', label: 'All Stages' },
@@ -34,6 +35,14 @@ export function MatchesPage() {
   const [stage, setStage] = useState('all')
   const [group, setGroup] = useState('all')
   const [status, setStatus] = useState('all')
+  const [betLeague, setBetLeague] = useState('')
+
+  const { data: leagues } = useMyLeagues()
+
+  // Default the bet league to the user's first league once loaded.
+  useEffect(() => {
+    if (!betLeague && leagues?.length) setBetLeague(leagues[0].id)
+  }, [leagues, betLeague])
 
   const { data: matches, isLoading } = useAllMatches({
     stage: stage !== 'all' ? stage : undefined,
@@ -84,13 +93,34 @@ export function MatchesPage() {
             ))}
           </SelectContent>
         </Select>
+
+        {/* League to bet in (drives inline steppers) */}
+        {!!leagues?.length && (
+          <Select value={betLeague} onValueChange={(v) => v != null && setBetLeague(v)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Bet in league" />
+            </SelectTrigger>
+            <SelectContent>
+              {leagues.map((l) => (
+                <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
+
+      {!leagues?.length && (
+        <p className="text-sm text-muted-foreground">
+          Join a league to place bets directly from this list.
+        </p>
+      )}
 
       {/* Match list */}
       <MatchList
         matches={matches}
         isLoading={isLoading}
         emptyMessage="No matches found with the selected filters"
+        betLeagueId={betLeague || undefined}
       />
     </div>
   )
