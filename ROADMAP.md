@@ -1,0 +1,162 @@
+# World Cup 2026 Picks — State & Roadmap
+
+> Last updated: 2026-05-27. Tournament starts **2026-06-11** (~2 weeks out).
+
+A web app where friends create private leagues and bet on World Cup 2026 match outcomes. Points are scored automatically when matches complete; leaderboards rank members.
+
+---
+
+## Stack
+
+| Layer | Tech |
+|-------|------|
+| Frontend | Vite 8, React 19, TypeScript 5.9 |
+| Styling | Tailwind v4, shadcn/ui, lucide icons, Geist font |
+| Data | TanStack Query 5, React Router 7 |
+| Backend | Supabase (Postgres + Auth + Realtime) — **live cloud project** |
+| Data source | [WC2026 API](https://api.wc2026api.com) — fixtures, live scores, standings, teams (Free tier, key acquired) |
+| Validation | Zod 4 |
+
+---
+
+## Current state
+
+### Working (built across 13 commits)
+
+- **Auth** — email/password login + register, session handling ([useAuth.ts](src/hooks/useAuth.ts)), protected routes
+- **Dashboard** — upcoming / live / recent matches
+- **Matches** — list, detail page, betting form
+- **Calendar** — match schedule view
+- **Groups** — standings tables (12 groups)
+- **Nations** — detail pages
+- **Leagues** — browse, create, join via 6-char code, leaderboard
+- **Profile** — own profile + public user profiles, stats page
+- **Notifications** — page + Supabase Realtime subscription ([useRealtime.ts](src/hooks/useRealtime.ts))
+- **Resilience** — error boundary, 404 page, global error handling
+- **DB** — 9 migrations: nations, profiles, leagues, league_members, matches, bets, match_events, scoring functions, views. RLS enabled on all tables.
+
+### Production build
+
+Passes (`npm run build`). One warning: JS bundle is 766 KB (226 KB gzip), no code-splitting. Acceptable for launch; optimize later.
+
+### Known gaps / risks
+
+| # | Issue | Impact |
+|---|-------|--------|
+| 1 | **No real fixture data** — seed has 48 nations but most are `TBD`, no matches seeded. WC2026 API now solves this (`/teams`, `/matches`) | Blocker: nothing to bet on |
+| 2 | **Scoring is winner-only** — [00008](supabase/migrations/00008_create_scoring_functions.sql) ignores predicted scores; `points_for_exact_score` never awarded | Bet model is exact-score (see below) |
+| 8 | **WC2026 API Free tier = 100 req/day** — auto-suspends on overage; can't sustain live polling from many clients | Blocker for live scores at scale |
+| 3 | BetForm UI has no score inputs (winner buttons only) | Pairs with #2 |
+| 4 | README is still default Vite template | Cosmetic |
+| 5 | Uncommitted work: migrations 00003/00004 edited; `combined_setup.sql`, `.temp/`, stray `.docx` untracked | Hygiene |
+| 6 | Hosting not set up | Blocker for launch |
+| 7 | Scoring trigger, RLS, deadline logic never tested end-to-end with real data | Correctness risk |
+
+---
+
+## Bet model — LOCKED: exact-score tiered (Kicktipp/Toto style)
+
+Predict the scoreline of each match. Points awarded by accuracy tier:
+
+| Outcome | Points | Source field |
+|---------|--------|--------------|
+| Exact scoreline | 3 | `points_for_exact_score` |
+| Correct result, wrong score | 1 | `points_for_correct` |
+| Wrong | 0 | `points_for_wrong` |
+
+Winner (home/draw/away) is derived from the predicted score, so the existing `predicted_winner` column still feeds tendency scoring.
+
+**Schema is ~80% ready** — no migration to add columns:
+- `bets.predicted_home_score` / `predicted_away_score` columns exist (currently unused)
+- `leagues.points_for_exact_score` defaults to `3` (never awarded yet)
+- `matches.home_score` / `away_score` are stored
+
+**Gap to close:** rewrite `evaluate_match_bets` ([00008](supabase/migrations/00008_create_scoring_functions.sql)) for tiered logic, and add two score inputs to [BetForm.tsx](src/components/match/BetForm.tsx) (deriving `predicted_winner` from them).
+
+---
+
+## Data ingestion architecture
+
+**Never call the WC2026 API from the browser** — Free tier is 100 req/day total (not per user) and the key must stay secret. Pull-based REST, no push.
+
+```
+WC2026 API ──poll──► Supabase Edge Function (cron) ──upsert──► matches/nations tables
+                                                                      │
+                                                       existing Realtime + scoring trigger
+                                                                      ▼
+                                                              clients (no API key)
+```
+
+- **Edge Function** (Deno) holds `WC2026_API_KEY` in Supabase secrets, polls on a schedule (pg_cron / Supabase scheduled function), upserts fixtures + scores.
+- Setting `status = 'completed'` (mapped from API `finished`) fires the existing `auto_evaluate_bets` trigger → scoring + leaderboards update automatically.
+- Clients keep using existing Supabase Realtime on `matches` — no API key client-side.
+
+**Field mapping (API → schema):**
+
+| API | Schema |
+|-----|--------|
+| `round`: `round_of_32`/`round_of_16`/`quarter`/`semi`/`final` | `stage`: `round-of-32`/`round-of-16`/`quarter-final`/`semi-final`/`final` |
+| `status`: `finished` | `status`: `completed` |
+| `home_team`/`away_team` (names) | `home_team_id`/`away_team_id` (UUID lookup by name/code) |
+| `kickoff_utc` | `date` (+ default `betting_deadline`) |
+| `stadium` | `venue` |
+
+**Request budget (Free = 100/day):** with server-side polling there is exactly **one** poller regardless of user count. Idle ~ every 10 min; match-day live ~ every 60s. A single match day at 60s for ~6h burns ~360 calls — **exceeds Free.** Either widen the live interval or upgrade.
+
+**Recommendation:** buy **Pro Unlimited ($4.99 one-time, valid through 2026-07-19)** before launch. Removes the suspension risk entirely. Until then, develop against `/test/match`.
+
+---
+
+## Roadmap
+
+### Phase 0 — Decide & clean (now)
+- [x] Lock bet model → exact-score tiered
+- [ ] Commit/discard pending migration edits; remove stray `.docx`, gitignore `.temp/`
+- [ ] Add `WC2026_API_KEY` to Supabase secrets (NOT client `.env`)
+- [ ] Replace default README
+
+### Phase 1 — Real data via WC2026 API (BLOCKER, do first)
+- [ ] Write Edge Function: fetch `/teams`, upsert real 48 nations (replace `TBD` rows)
+- [ ] Fetch `/matches`, upsert all 104 fixtures with field mapping above (kickoff → deadline)
+- [ ] Name/code → nation UUID lookup for `home_team_id`/`away_team_id`
+- [ ] Verify flags/codes render; backfill flags not in API
+- [ ] One-time seed run; schedule incremental sync (scores/status)
+
+### Phase 2 — Exact-score scoring (LOCKED model)
+- [ ] Rewrite `evaluate_match_bets` with tiered points (exact 3 / result 1 / wrong 0)
+- [ ] Add home/away score inputs to BetForm; derive `predicted_winner`; update `usePlaceBet`
+- [ ] Test against `/test/match`: bet → match finishes → trigger awards correct tier → leaderboard updates
+- [ ] Verify RLS (can't see others' bets before deadline) and deadline enforcement
+
+### Phase 3 — Hosting & deploy (BLOCKER for launch)
+- [ ] Pick host (recommend **Vercel** or **Netlify** for static Vite + env vars)
+- [ ] Wire Supabase env vars in host
+- [ ] Confirm Supabase Auth redirect URLs / allowed origins for prod domain
+- [ ] Deploy Edge Function + cron schedule
+- [ ] Smoke-test signup → join league → bet on live URL
+
+### Phase 4 — Polish (before/after launch)
+- [ ] Decide WC2026 API tier (upgrade to Pro Unlimited recommended)
+- [ ] Tune live poll interval vs request budget
+- [ ] Mobile responsiveness pass
+- [ ] Empty/loading/error states everywhere
+- [ ] Live score updates visible via Realtime (fed by ingestion)
+- [ ] Leaderboard tiebreakers clear
+
+### Phase 5 — Post-launch / nice-to-have
+- [ ] Code-splitting to shrink bundle
+- [ ] Knockout-stage fixtures as they resolve
+- [ ] Bracket/champion picks (separate mechanic)
+- [ ] Push/email notifications
+
+---
+
+## Critical path to launch
+
+```
+API ingestion fn (P1) ──► Exact-score scoring (P2) ──► Deploy + cron (P3) ──► friends bet
+         │
+   (dev against /test/match — no waiting for June 11)
+```
+
+P1 and P3 are hard blockers. Given ~2 weeks, prioritize: **ingestion → scoring → deploy.** Buy Pro Unlimited key ($4.99) before live matches to avoid Free-tier suspension.
