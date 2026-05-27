@@ -4,6 +4,9 @@
 
 A web app where friends create private leagues and bet on World Cup 2026 match outcomes. Points are scored automatically when matches complete; leaderboards rank members.
 
+> **Where we are (2026-05-27):** Frontend feature-complete, build green. Bet model locked (exact-score tiered). WC2026 API key in Supabase secrets. Nation profile schema applied to live DB (00010). `sync-teams` function written but **not deployed/run** — DB still has placeholder `TBD` nations, zero matches.
+> **Next:** deploy + run `sync-teams` (after clearing seed) → `sync-matches` → exact-score scoring → hosting.
+
 ---
 
 ## Stack
@@ -48,7 +51,7 @@ Passes (`npm run build`). One warning: JS bundle is 766 KB (226 KB gzip), no cod
 | 8 | **WC2026 API Free tier = 100 req/day** — auto-suspends on overage; can't sustain live polling from many clients | Blocker for live scores at scale |
 | 3 | BetForm UI has no score inputs (winner buttons only) | Pairs with #2 |
 | 4 | README is still default Vite template | Cosmetic |
-| 5 | Uncommitted work: migrations 00003/00004 edited; `combined_setup.sql`, `.temp/`, stray `.docx` untracked | Hygiene |
+| 5 | ~~Uncommitted work / stray files~~ — committed; `.temp` + `combined_setup.sql` gitignored | ✅ resolved |
 | 6 | Hosting not set up | Blocker for launch |
 | 7 | Scoring trigger, RLS, deadline logic never tested end-to-end with real data | Correctness risk |
 
@@ -111,16 +114,18 @@ WC2026 API ──poll──► Supabase Edge Function (cron) ──upsert──�
 
 ### Phase 0 — Decide & clean (now)
 - [x] Lock bet model → exact-score tiered
-- [ ] Commit/discard pending migration edits; remove stray `.docx`, gitignore `.temp/`
-- [ ] Add `WC2026_API_KEY` to Supabase secrets (NOT client `.env`)
+- [x] Commit pending migration edits; gitignore `.temp/` + `combined_setup.sql` (`.docx` removed)
+- [x] Add `WC2026_API_KEY` to Supabase secrets (NOT client `.env`)
 - [ ] Replace default README
 
 ### Phase 1 — Real data via WC2026 API (BLOCKER, do first)
-- [ ] Write Edge Function: fetch `/teams`, upsert real 48 nations (replace `TBD` rows)
-- [ ] Fetch `/matches`, upsert all 104 fixtures with field mapping above (kickoff → deadline)
+- [x] Nation profile schema (migration 00010): editorial fields + `external_id` + `nation_heroes`
+- [x] Write `sync-teams` Edge Function: fetch `/teams`, upsert 48 nations by `external_id` *(written, not deployed/run)*
+- [ ] Clear placeholder seed (`DELETE FROM nations;`) then deploy + run `sync-teams`
+- [ ] Write `sync-matches`: fetch `/matches`, upsert all 104 fixtures with field mapping above (kickoff → deadline)
 - [ ] Name/code → nation UUID lookup for `home_team_id`/`away_team_id`
-- [ ] Verify flags/codes render; backfill flags not in API
-- [ ] One-time seed run; schedule incremental sync (scores/status)
+- [ ] Verify flags/codes render; backfill flags not in API (`flag_url` is null from API)
+- [ ] Write `sync-scores` poller; schedule incremental sync (scores/status)
 
 ### Phase 2 — Exact-score scoring (LOCKED model)
 - [ ] Rewrite `evaluate_match_bets` with tiered points (exact 3 / result 1 / wrong 0)
@@ -142,6 +147,15 @@ WC2026 API ──poll──► Supabase Edge Function (cron) ──upsert──�
 - [ ] Empty/loading/error states everywhere
 - [ ] Live score updates visible via Realtime (fed by ingestion)
 - [ ] Leaderboard tiebreakers clear
+
+### Phase 2b — Nations browse + profiles (non-blocking, parallel)
+Schema ready (migration 00010). Content is editorial — fill manually over time.
+- [x] DB schema: nation profile fields + `nation_heroes`
+- [ ] `/nations` index page — scrollable grid of all 48 (flag, name, group)
+- [ ] Enrich [NationDetailPage](src/features/nations/NationDetailPage.tsx): bio, home stadium, WC appearances/titles, FIFA rank
+- [ ] Heroes section (photos) from `nation_heroes`
+- [ ] Flag images (`flag_url`) with emoji `flag` fallback
+- [ ] Populate editorial content + hero photos (manual, ongoing)
 
 ### Phase 5 — Post-launch / nice-to-have
 - [ ] Code-splitting to shrink bundle
