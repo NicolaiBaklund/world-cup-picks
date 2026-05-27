@@ -4,8 +4,8 @@
 
 A web app where friends create private leagues and bet on World Cup 2026 match outcomes. Points are scored automatically when matches complete; leaderboards rank members.
 
-> **Where we are (2026-05-27):** Frontend feature-complete, build green. Bet model locked (exact-score tiered). **Real data live:** 48 nations + all 104 fixtures synced from WC2026 API (sync-teams + sync-matches deployed). Knockout matches show TBD vs TBD until groups finish.
-> **Next:** exact-score scoring (Phase 2) → daily cron for sync-matches → hosting (Phase 3).
+> **Where we are (2026-05-27):** Frontend feature-complete, build green. Bet model locked (exact-score tiered) **and live** — tiered scoring (00016) + score-stepper betting shipped and verified end-to-end against all tiers incl. penalty-decided draws. **Real data live:** 48 nations + all 104 fixtures synced from WC2026 API (sync-teams + sync-matches deployed). Knockout matches show TBD vs TBD until groups finish.
+> **Next:** hosting & deploy (Phase 3).
 
 ---
 
@@ -47,13 +47,13 @@ Passes (`npm run build`). One warning: JS bundle is 766 KB (226 KB gzip), no cod
 | # | Issue | Impact |
 |---|-------|--------|
 | 1 | **No real fixture data** — seed has 48 nations but most are `TBD`, no matches seeded. WC2026 API now solves this (`/teams`, `/matches`) | Blocker: nothing to bet on |
-| 2 | **Scoring is winner-only** — [00008](supabase/migrations/00008_create_scoring_functions.sql) ignores predicted scores; `points_for_exact_score` never awarded | Bet model is exact-score (see below) |
+| 2 | ~~**Scoring is winner-only**~~ — [00016](supabase/migrations/00016_tiered_exact_score_scoring.sql) rewrites `evaluate_match_bets` with tiered points (exact/result/wrong); `points_for_exact_score` now awarded | ✅ resolved |
 | 8 | **WC2026 API Free tier = 100 req/day** — auto-suspends on overage; can't sustain live polling from many clients | Blocker for live scores at scale |
-| 3 | BetForm UI has no score inputs (winner buttons only) | Pairs with #2 |
+| 3 | ~~BetForm UI has no score inputs~~ — score steppers added to BetForm + inline auto-saving steppers on matches list | ✅ resolved |
 | 4 | README is still default Vite template | Cosmetic |
 | 5 | ~~Uncommitted work / stray files~~ — committed; `.temp` + `combined_setup.sql` gitignored | ✅ resolved |
 | 6 | Hosting not set up | Blocker for launch |
-| 7 | Scoring trigger, RLS, deadline logic never tested end-to-end with real data | Correctness risk |
+| 7 | ~~Scoring trigger never tested end-to-end~~ — verified via SQL harness: all 3 tiers + penalty-decided draw award correct points; `league_members`/`profiles` aggregates consistent. RLS/deadline still unverified in-app | Partially resolved |
 
 ---
 
@@ -135,10 +135,10 @@ WC2026 API ──poll──► Supabase Edge Function (cron) ──upsert──�
 - [ ] Add tighter in-match polling schedule near kickoff (needs Pro API key for Free-tier 100/day headroom)
 
 ### Phase 2 — Exact-score scoring (LOCKED model)
-- [ ] Rewrite `evaluate_match_bets` with tiered points (exact 3 / result 1 / wrong 0)
-- [ ] Add home/away score inputs to BetForm; derive `predicted_winner`; update `usePlaceBet`
-- [ ] Test against `/test/match`: bet → match finishes → trigger awards correct tier → leaderboard updates
-- [ ] Verify RLS (can't see others' bets before deadline) and deadline enforcement
+- [x] Rewrite `evaluate_match_bets` with tiered points (exact 3 / result 1 / wrong 0) — [00016](supabase/migrations/00016_tiered_exact_score_scoring.sql); regulation score drives the exact tier, `winner` (incl. penalties) drives the result tier
+- [x] Add home/away score inputs to BetForm; derive `predicted_winner`; update `usePlaceBet` — plus inline auto-saving score steppers on the matches list (default 0-0, +/- per team)
+- [x] Test scoring end-to-end via SQL harness: all 3 tiers + penalty-decided draw → trigger awards correct tier → `league_members`/`profiles` aggregates update
+- [ ] Verify RLS (can't see others' bets before deadline) and deadline enforcement in-app
 
 ### Phase 3 — Hosting & deploy (BLOCKER for launch)
 - [ ] Pick host (recommend **Vercel** or **Netlify** for static Vite + env vars)
