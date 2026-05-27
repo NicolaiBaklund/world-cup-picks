@@ -122,8 +122,12 @@ WC2026 API ──poll──► Supabase Edge Function (cron) ──upsert──�
 - [x] Nation profile schema (migration 00010): editorial fields + `external_id` + `nation_heroes`
 - [x] Write `sync-teams` Edge Function: fetch `/teams`, upsert 48 nations by `external_id` *(written, not deployed/run)*
 - [ ] Clear placeholder seed (`DELETE FROM nations;`) then deploy + run `sync-teams`
-- [ ] Write `sync-matches`: fetch `/matches`, upsert all 104 fixtures with field mapping above (kickoff → deadline)
-- [ ] Name/code → nation UUID lookup for `home_team_id`/`away_team_id`
+- [ ] Migration 00011: add one "To Be Decided" placeholder nation (code `TBD`); DROP `matches.different_teams` CHECK (knockout starts TBD vs TBD → same id)
+- [ ] Write `sync-matches`: fetch `/matches`, upsert fixtures by `external_id`; undecided slot (API `home_team_id` null) → TBD nation; real `home_team_id` → map via `nations.external_id`
+- [ ] **Daily sync (after kickoff):** API adds knockout matches over time AND resolves teams as groups finish — not just a one-time seed
+- [ ] Betting opens per-match once both real teams known (skip bets on TBD slots)
+
+> API notes: undecided teams come back as `null` (no "Winner Group A" label). `round_of_32` currently empty — knockout fixtures appear incrementally. Match objects carry `home_team_id` (= `external_id`), inline code/flag, `stadium`, `home_pen`/`away_pen`.
 - [ ] Verify flags/codes render; backfill flags not in API (`flag_url` is null from API)
 - [ ] Write `sync-scores` poller; schedule incremental sync (scores/status)
 
