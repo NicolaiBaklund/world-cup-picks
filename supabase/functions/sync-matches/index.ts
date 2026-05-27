@@ -33,14 +33,15 @@ interface ApiMatch {
   away_pen: number | null
 }
 
-// API round -> schema stage
+// API round -> schema stage. NOTE: live API uses R32/R16/QF/SF/3rd, NOT the
+// round_of_32/quarter/... values shown in the published docs.
 const STAGE: Record<string, string> = {
   group: 'group',
-  round_of_32: 'round-of-32',
-  round_of_16: 'round-of-16',
-  quarter: 'quarter-final',
-  semi: 'semi-final',
-  third_place: 'third-place',
+  R32: 'round-of-32',
+  R16: 'round-of-16',
+  QF: 'quarter-final',
+  SF: 'semi-final',
+  '3rd': 'third-place',
   final: 'final',
 }
 

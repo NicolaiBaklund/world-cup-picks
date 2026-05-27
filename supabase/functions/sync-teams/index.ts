@@ -66,8 +66,23 @@ Deno.serve(async (req) => {
     flag_url: t.flag_url,
   }))
 
-  // 3. Upsert on external_id
   const supabase = createClient(supabaseUrl, serviceKey)
+
+  // 3. Remove original placeholder seed rows ("TBD A3" etc.) so real teams don't
+  //    collide on the `code` unique constraint. Keep the permanent 'TBD' nation
+  //    and any already-synced real rows (they have external_id). Idempotent.
+  const { error: delErr } = await supabase
+    .from('nations')
+    .delete()
+    .is('external_id', null)
+    .neq('code', 'TBD')
+  if (delErr) {
+    return new Response(JSON.stringify({ error: `cleanup: ${delErr.message}` }), {
+      status: 500, headers: { 'Content-Type': 'application/json' },
+    })
+  }
+
+  // 4. Upsert on external_id
   const { error, count } = await supabase
     .from('nations')
     .upsert(rows, { onConflict: 'external_id', count: 'exact' })
