@@ -111,6 +111,7 @@ export type Database = {
       matches: {
         Row: {
           id: string
+          external_id: number | null
           home_team_id: string
           away_team_id: string
           match_number: number | null

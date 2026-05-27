@@ -121,7 +121,9 @@ WC2026 API ──poll──► Supabase Edge Function (cron) ──upsert──�
 ### Phase 1 — Real data via WC2026 API (BLOCKER, do first)
 - [x] Nation profile schema (migration 00010): editorial fields + `external_id` + `nation_heroes`
 - [x] Write `sync-teams` Edge Function: fetch `/teams`, upsert 48 nations by `external_id` *(written, not deployed/run)*
-- [ ] Clear placeholder seed (`DELETE FROM nations;`) then deploy + run `sync-teams`
+- [x] Migration 00011: TBD placeholder nation, drop `different_teams`, add `matches.external_id`
+- [x] Write `sync-matches` Edge Function *(written, not deployed/run)*
+- [ ] Clear old placeholders (`DELETE FROM nations WHERE external_id IS NULL AND code <> 'TBD'`) then deploy + run `sync-teams`
 - [ ] Migration 00011: add one "To Be Decided" placeholder nation (code `TBD`); DROP `matches.different_teams` CHECK (knockout starts TBD vs TBD → same id)
 - [ ] Write `sync-matches`: fetch `/matches`, upsert fixtures by `external_id`; undecided slot (API `home_team_id` null) → TBD nation; real `home_team_id` → map via `nations.external_id`
 - [ ] **Daily sync (after kickoff):** API adds knockout matches over time AND resolves teams as groups finish — not just a one-time seed

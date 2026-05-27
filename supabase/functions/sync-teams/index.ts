@@ -8,9 +8,11 @@
 // Upsert key: nations.external_id (unique). Editorial columns (bio, heroes,
 // home_stadium, wc_*) are NOT touched here — they are filled manually later.
 //
-// NOTE: the existing placeholder seed rows ("TBD A3" etc.) have external_id = NULL
-// and may collide on the `code` UNIQUE constraint (e.g. 'MEX'). Clear the placeholder
-// seed before the first real run:  DELETE FROM nations;  (safe while no matches/bets seeded)
+// NOTE: the original placeholder seed rows ("TBD A3" etc.) have external_id = NULL
+// and may collide on the `code` UNIQUE constraint (e.g. 'MEX'). Before the first real
+// run, clear ONLY those placeholders — keep the permanent 'TBD' nation (migration 00011):
+//   DELETE FROM nations WHERE external_id IS NULL AND code <> 'TBD';
+// (safe while no matches/bets reference them)
 
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
