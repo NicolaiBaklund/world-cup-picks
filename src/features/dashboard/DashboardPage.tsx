@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { Trophy, Calendar, Users, ArrowRight } from 'lucide-react'
+import { Trophy, Users, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { MatchList } from '@/components/match/MatchList'
@@ -33,17 +33,6 @@ export function DashboardPage() {
               <div>
                 <p className="font-medium">Matches</p>
                 <p className="text-sm text-muted-foreground">View all matches</p>
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
-        <Link to="/calendar">
-          <Card className="hover:bg-accent/50 transition-colors cursor-pointer h-full">
-            <CardContent className="flex items-center gap-3 p-4">
-              <Calendar className="h-8 w-8 text-primary" />
-              <div>
-                <p className="font-medium">Calendar</p>
-                <p className="text-sm text-muted-foreground">Match schedule</p>
               </div>
             </CardContent>
           </Card>

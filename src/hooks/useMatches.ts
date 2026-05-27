@@ -89,20 +89,3 @@ export function useMatch(id: string) {
     enabled: !!id,
   })
 }
-
-export function useMatchesByDate(startDate: string, endDate: string) {
-  return useQuery({
-    queryKey: [MATCHES_KEY, 'calendar', startDate, endDate],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('matches_with_teams')
-        .select('*')
-        .gte('date', startDate)
-        .lte('date', endDate)
-        .order('date', { ascending: true })
-      if (error) throw error
-      return data as MatchWithTeams[]
-    },
-    enabled: !!startDate && !!endDate,
-  })
-}

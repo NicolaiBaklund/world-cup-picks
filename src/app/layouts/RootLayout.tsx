@@ -2,7 +2,6 @@ import { Link, Outlet, useLocation } from 'react-router'
 import { useState } from 'react'
 import {
   Trophy,
-  Calendar,
   Users,
   BarChart3,
   User,
@@ -20,7 +19,6 @@ import { useAuth } from '@/hooks/useAuth'
 const navItems = [
   { to: '/', label: 'Home', icon: Home },
   { to: '/matches', label: 'Matches', icon: Trophy },
-  { to: '/calendar', label: 'Calendar', icon: Calendar },
   { to: '/groups', label: 'Groups', icon: Globe },
   { to: '/nations', label: 'Nations', icon: Flag },
   { to: '/leagues', label: 'Leagues', icon: Users },

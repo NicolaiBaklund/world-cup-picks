@@ -8,7 +8,6 @@ import { RegisterPage } from '@/features/auth/RegisterPage'
 import { DashboardPage } from '@/features/dashboard/DashboardPage'
 import { MatchesPage } from '@/features/matches/MatchesPage'
 import { MatchDetailPage } from '@/features/matches/MatchDetailPage'
-import { CalendarPage } from '@/features/calendar/CalendarPage'
 import { GroupStandingsPage } from '@/features/groups/GroupStandingsPage'
 import { NationsPage } from '@/features/nations/NationsPage'
 import { NationDetailPage } from '@/features/nations/NationDetailPage'
@@ -42,7 +41,6 @@ export const routes: RouteObject[] = [
           { path: '/', element: <DashboardPage /> },
           { path: '/matches', element: <MatchesPage /> },
           { path: '/matches/:id', element: <MatchDetailPage /> },
-          { path: '/calendar', element: <CalendarPage /> },
           { path: '/groups', element: <GroupStandingsPage /> },
           { path: '/nations', element: <NationsPage /> },
           { path: '/nations/:id', element: <NationDetailPage /> },
