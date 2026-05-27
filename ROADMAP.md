@@ -4,8 +4,8 @@
 
 A web app where friends create private leagues and bet on World Cup 2026 match outcomes. Points are scored automatically when matches complete; leaderboards rank members.
 
-> **Where we are (2026-05-27):** Frontend feature-complete, build green. Bet model locked (exact-score tiered). WC2026 API key in Supabase secrets. Nation profile schema applied to live DB (00010). `sync-teams` function written but **not deployed/run** — DB still has placeholder `TBD` nations, zero matches.
-> **Next:** deploy + run `sync-teams` (after clearing seed) → `sync-matches` → exact-score scoring → hosting.
+> **Where we are (2026-05-27):** Frontend feature-complete, build green. Bet model locked (exact-score tiered). **Real data live:** 48 nations + all 104 fixtures synced from WC2026 API (sync-teams + sync-matches deployed). Knockout matches show TBD vs TBD until groups finish.
+> **Next:** exact-score scoring (Phase 2) → daily cron for sync-matches → hosting (Phase 3).
 
 ---
 
@@ -123,7 +123,7 @@ WC2026 API ──poll──► Supabase Edge Function (cron) ──upsert──�
 - [x] Write `sync-teams` Edge Function: fetch `/teams`, upsert 48 nations by `external_id` *(written, not deployed/run)*
 - [x] Migration 00011: TBD placeholder nation, drop `different_teams`, add `matches.external_id`
 - [x] Write `sync-matches` Edge Function *(written, not deployed/run)*
-- [ ] Clear old placeholders (`DELETE FROM nations WHERE external_id IS NULL AND code <> 'TBD'`) then deploy + run `sync-teams`
+- [x] Deploy both functions (`--no-verify-jwt`); run once → **48 real nations + 104 fixtures live in DB** (72/16/8/4/2/1/1 by stage)
 - [ ] Migration 00011: add one "To Be Decided" placeholder nation (code `TBD`); DROP `matches.different_teams` CHECK (knockout starts TBD vs TBD → same id)
 - [ ] Write `sync-matches`: fetch `/matches`, upsert fixtures by `external_id`; undecided slot (API `home_team_id` null) → TBD nation; real `home_team_id` → map via `nations.external_id`
 - [ ] **Daily sync (after kickoff):** API adds knockout matches over time AND resolves teams as groups finish — not just a one-time seed
