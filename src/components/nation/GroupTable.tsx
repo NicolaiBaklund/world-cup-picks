@@ -29,7 +29,14 @@ export function GroupTable({ groupName, standings }: GroupTableProps) {
           </TableHeader>
           <TableBody>
             {standings.map((nation) => (
-              <TableRow key={nation.id} className={nation.position <= 2 ? 'bg-accent/30' : ''}>
+              <TableRow
+                key={nation.id}
+                className={
+                  nation.position <= 2
+                    ? 'bg-emerald-500/15 hover:bg-emerald-500/20 font-semibold border-l-4 border-l-emerald-500'
+                    : ''
+                }
+              >
                 <TableCell className="font-medium">{nation.position}</TableCell>
                 <TableCell>
                   <Link
