@@ -1,5 +1,6 @@
 import { Minus, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { NationFlag } from '@/components/nation/NationFlag'
 import type { BetPrediction } from '@/types'
 
 /** Derive the predicted winner from a predicted scoreline. */
@@ -10,19 +11,22 @@ export function winnerFromScore(home: number, away: number): BetPrediction {
 }
 
 interface ScoreStepperProps {
-  /** Team name — used for the accessible label only. */
+  /** Team name — used as the accessible label. */
   label: string
   flag?: string
+  flagUrl?: string | null
   value: number
   onChange: (next: number) => void
   disabled?: boolean
   max?: number
 }
 
-export function ScoreStepper({ label, flag, value, onChange, disabled, max = 99 }: ScoreStepperProps) {
+export function ScoreStepper({ label, flag, flagUrl, value, onChange, disabled, max = 99 }: ScoreStepperProps) {
   return (
     <div className="flex flex-col items-center gap-1">
-      {flag && <span className="text-xl leading-none" aria-label={label}>{flag}</span>}
+      {(flagUrl || flag) && (
+        <NationFlag url={flagUrl} emoji={flag ?? ''} name={label} size="md" />
+      )}
       <div className="flex items-center gap-2">
         <Button
           type="button"

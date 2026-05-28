@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { BetForm } from '@/components/match/BetForm'
+import { NationFlag } from '@/components/nation/NationFlag'
 import { useMatch } from '@/hooks/useMatches'
 
 export function MatchDetailPage() {
@@ -54,7 +55,15 @@ export function MatchDetailPage() {
           <div className="flex items-center justify-between">
             <div className="flex-1 text-center">
               <Link to={`/nations/${match.home_team_id}`} className="hover:opacity-80">
-                <div className="text-4xl mb-2">{match.home_team_flag}</div>
+                <div className="mb-2 flex justify-center">
+                  <NationFlag
+                    url={match.home_team_flag_url}
+                    emoji={match.home_team_flag}
+                    name={match.home_team_name}
+                    size="lg"
+                    className="h-12 w-16 text-5xl"
+                  />
+                </div>
                 <div className="font-semibold">{match.home_team_name}</div>
               </Link>
             </div>
@@ -81,7 +90,15 @@ export function MatchDetailPage() {
 
             <div className="flex-1 text-center">
               <Link to={`/nations/${match.away_team_id}`} className="hover:opacity-80">
-                <div className="text-4xl mb-2">{match.away_team_flag}</div>
+                <div className="mb-2 flex justify-center">
+                  <NationFlag
+                    url={match.away_team_flag_url}
+                    emoji={match.away_team_flag}
+                    name={match.away_team_name}
+                    size="lg"
+                    className="h-12 w-16 text-5xl"
+                  />
+                </div>
                 <div className="font-semibold">{match.away_team_name}</div>
               </Link>
             </div>

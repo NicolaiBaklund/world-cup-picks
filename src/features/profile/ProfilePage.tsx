@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
+import { NationFlag } from '@/components/nation/NationFlag'
 import { useMyProfile, useUpdateProfile } from '@/hooks/useProfile'
 import { useAllMyBets } from '@/hooks/useBets'
 import { useAuth } from '@/hooks/useAuth'
@@ -123,14 +124,18 @@ export function ProfilePage() {
               <Card key={bet.bet_id}>
                 <CardContent className="p-3 flex items-center justify-between">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span>{bet.home_team_flag}</span>
+                    <NationFlag url={bet.home_team_flag_url} emoji={bet.home_team_flag} name={bet.home_team_name} size="sm" />
                     <span className="text-sm truncate">{bet.home_team_name} vs {bet.away_team_name}</span>
-                    <span>{bet.away_team_flag}</span>
+                    <NationFlag url={bet.away_team_flag_url} emoji={bet.away_team_flag} name={bet.away_team_name} size="sm" />
                     <Badge variant="outline" className="text-xs">{bet.league_name}</Badge>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <span className="text-xs text-muted-foreground">
-                      {bet.predicted_winner === 'home' ? bet.home_team_flag : bet.predicted_winner === 'away' ? bet.away_team_flag : 'Draw'}
+                      {bet.predicted_winner === 'home' ? (
+                        <NationFlag url={bet.home_team_flag_url} emoji={bet.home_team_flag} name={bet.home_team_name} size="sm" />
+                      ) : bet.predicted_winner === 'away' ? (
+                        <NationFlag url={bet.away_team_flag_url} emoji={bet.away_team_flag} name={bet.away_team_name} size="sm" />
+                      ) : 'Draw'}
                     </span>
                     {bet.is_correct !== null && (
                       <Badge variant={bet.is_correct ? 'default' : 'secondary'}>

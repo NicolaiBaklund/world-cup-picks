@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { NationFlag } from './NationFlag'
 import type { GroupStanding } from '@/types'
 
 interface GroupTableProps {
@@ -43,7 +44,7 @@ export function GroupTable({ groupName, standings }: GroupTableProps) {
                     to={`/nations/${nation.id}`}
                     className="flex items-center gap-2 hover:underline"
                   >
-                    <span>{nation.flag}</span>
+                    <NationFlag url={nation.flag_url} emoji={nation.flag} name={nation.name} size="md" />
                     <span>{nation.name}</span>
                   </Link>
                 </TableCell>
