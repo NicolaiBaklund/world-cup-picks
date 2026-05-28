@@ -126,6 +126,25 @@ UPDATE nations SET flag='🏴󠁧󠁢󠁥󠁮󠁧󠁿', nickname='The Three Lion
 UPDATE nations SET flag='🇭🇷', nickname='Vatreni (The Blazers)', fifa_ranking=9, home_stadium='Stadion Maksimir', home_stadium_city='Zagreb', wc_appearances=6, wc_titles=0, best_finish='Runners-up (2018)', first_wc_year=1998,
   bio='A small nation punching far above its weight — finalists in 2018 and third in 2022.' WHERE code='CRO';
 
+-- ---------- Flag images (FlagCDN, ISO 3166-1 alpha-2) ----------
+-- FlagCDN keys on ISO alpha-2, not the FIFA 3-letter code; England/Scotland
+-- use the GB subdivision slugs. NationCard/detail fall back to the emoji flag.
+UPDATE nations n SET flag_url = 'https://flagcdn.com/' || m.iso || '.svg'
+FROM (VALUES
+  ('MEX','mx'),('KOR','kr'),('RSA','za'),('CZE','cz'),
+  ('CAN','ca'),('QAT','qa'),('SUI','ch'),('BIH','ba'),
+  ('BRA','br'),('HAI','ht'),('SCO','gb-sct'),('MAR','ma'),
+  ('USA','us'),('AUS','au'),('PAR','py'),('TUR','tr'),
+  ('CIV','ci'),('ECU','ec'),('GER','de'),('CUW','cw'),
+  ('NED','nl'),('JPN','jp'),('TUN','tn'),('SWE','se'),
+  ('BEL','be'),('EGY','eg'),('IRN','ir'),('NZL','nz'),
+  ('KSA','sa'),('ESP','es'),('URU','uy'),('CPV','cv'),
+  ('FRA','fr'),('SEN','sn'),('NOR','no'),('IRQ','iq'),
+  ('ARG','ar'),('ALG','dz'),('AUT','at'),('JOR','jo'),
+  ('POR','pt'),('UZB','uz'),('COL','co'),('COD','cd'),
+  ('GHA','gh'),('PAN','pa'),('ENG','gb-eng'),('CRO','hr')
+) AS m(code, iso) WHERE n.code = m.code;
+
 -- ---------- Heroes (1-2 per nation) ----------
 INSERT INTO nation_heroes (nation_id, name, position, years_active, description, sort_order)
 SELECT n.id, h.name, h.position, h.years, h.descr, h.ord
