@@ -30,37 +30,39 @@ export function usePlaceBet() {
   return useMutation({
     mutationFn: async ({
       matchId,
-      leagueId,
+      leagueIds,
       predictedWinner,
       predictedHomeScore,
       predictedAwayScore,
     }: {
       matchId: string
-      leagueId: string
+      /** One bet row is upserted per league — bets aren't placed per league in the UI. */
+      leagueIds: string[]
       predictedWinner: BetPrediction
       predictedHomeScore: number
       predictedAwayScore: number
     }) => {
+      if (leagueIds.length === 0) throw new Error('You need to join a league before betting')
+
+      const rows = leagueIds.map((league_id) => ({
+        user_id: user!.id,
+        match_id: matchId,
+        league_id,
+        predicted_winner: predictedWinner,
+        predicted_home_score: predictedHomeScore,
+        predicted_away_score: predictedAwayScore,
+      }))
+
       const { data, error } = await supabase
         .from('bets')
-        .upsert(
-          {
-            user_id: user!.id,
-            match_id: matchId,
-            league_id: leagueId,
-            predicted_winner: predictedWinner,
-            predicted_home_score: predictedHomeScore,
-            predicted_away_score: predictedAwayScore,
-          },
-          { onConflict: 'user_id,match_id,league_id' }
-        )
+        .upsert(rows, { onConflict: 'user_id,match_id,league_id' })
         .select()
-        .single()
       if (error) throw error
       return data
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: [BETS_KEY, 'match', variables.matchId] })
+      queryClient.invalidateQueries({ queryKey: [BETS_KEY, 'all'] })
     },
   })
 }

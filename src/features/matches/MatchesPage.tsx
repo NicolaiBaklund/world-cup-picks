@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { MatchList } from '@/components/match/MatchList'
 import { useAllMatches } from '@/hooks/useMatches'
@@ -35,14 +35,9 @@ export function MatchesPage() {
   const [stage, setStage] = useState('all')
   const [group, setGroup] = useState('all')
   const [status, setStatus] = useState('all')
-  const [betLeague, setBetLeague] = useState('')
 
   const { data: leagues } = useMyLeagues()
-
-  // Default the bet league to the user's first league once loaded.
-  useEffect(() => {
-    if (!betLeague && leagues?.length) setBetLeague(leagues[0].id)
-  }, [leagues, betLeague])
+  const hasLeagues = !!leagues?.length
 
   const { data: matches, isLoading } = useAllMatches({
     stage: stage !== 'all' ? stage : undefined,
@@ -95,9 +90,9 @@ export function MatchesPage() {
         </Select>
       </div>
 
-      {!leagues?.length && (
+      {!hasLeagues && (
         <p className="text-sm text-muted-foreground">
-          Join a league to place bets directly from this list.
+          Join a league to place predictions directly from this list.
         </p>
       )}
 
@@ -106,7 +101,7 @@ export function MatchesPage() {
         matches={matches}
         isLoading={isLoading}
         emptyMessage="No matches found with the selected filters"
-        betLeagueId={betLeague || undefined}
+        enableBetting={hasLeagues}
       />
     </div>
   )
