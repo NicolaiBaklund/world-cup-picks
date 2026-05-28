@@ -99,14 +99,14 @@ export function InlineBetControl({ match, leagueId }: InlineBetControlProps) {
     <div className="relative border-t pt-3">
       <div className="flex items-center justify-center gap-4">
         <ScoreStepper
-          label={match.home_team_code}
+          label={match.home_team_name}
           flag={match.home_team_flag}
           value={homeScore}
           onChange={onHome}
         />
         <span className="text-xl font-bold text-muted-foreground">–</span>
         <ScoreStepper
-          label={match.away_team_code}
+          label={match.away_team_name}
           flag={match.away_team_flag}
           value={awayScore}
           onChange={onAway}

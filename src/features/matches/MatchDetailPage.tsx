@@ -56,7 +56,6 @@ export function MatchDetailPage() {
               <Link to={`/nations/${match.home_team_id}`} className="hover:opacity-80">
                 <div className="text-4xl mb-2">{match.home_team_flag}</div>
                 <div className="font-semibold">{match.home_team_name}</div>
-                <div className="text-sm text-muted-foreground">{match.home_team_code}</div>
               </Link>
             </div>
 
@@ -84,7 +83,6 @@ export function MatchDetailPage() {
               <Link to={`/nations/${match.away_team_id}`} className="hover:opacity-80">
                 <div className="text-4xl mb-2">{match.away_team_flag}</div>
                 <div className="font-semibold">{match.away_team_name}</div>
-                <div className="text-sm text-muted-foreground">{match.away_team_code}</div>
               </Link>
             </div>
           </div>

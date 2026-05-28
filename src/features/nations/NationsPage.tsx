@@ -1,6 +1,5 @@
 import { Link } from 'react-router'
 import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAllNations } from '@/hooks/useNations'
 import type { Nation } from '@/types'
@@ -65,7 +64,6 @@ function NationCard({ nation }: { nation: Nation }) {
               <p className="text-xs text-muted-foreground">{nation.nickname}</p>
             )}
           </div>
-          <Badge variant="outline" className="text-xs">{nation.code}</Badge>
         </CardContent>
       </Card>
     </Link>

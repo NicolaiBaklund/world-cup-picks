@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router'
+import { useParams, useNavigate } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,6 +11,7 @@ import type { MatchWithTeams } from '@/types'
 
 export function NationDetailPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const { data: nation, isLoading } = useNation(id!)
   const { data: heroes } = useNationHeroes(id!)
   const { data: allMatches, isLoading: matchesLoading } = useAllMatches()
@@ -37,11 +38,9 @@ export function NationDetailPage() {
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
-      <Link to="/groups">
-        <Button variant="ghost" size="sm" className="gap-1">
-          <ArrowLeft className="h-4 w-4" /> Back to groups
-        </Button>
-      </Link>
+      <Button variant="ghost" size="sm" className="gap-1" onClick={() => navigate(-1)}>
+        <ArrowLeft className="h-4 w-4" /> Back
+      </Button>
 
       {/* Nation header */}
       <Card>
@@ -60,7 +59,6 @@ export function NationDetailPage() {
             <p className="text-muted-foreground italic mt-1">{nation.nickname}</p>
           )}
           <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
-            <Badge variant="outline">{nation.code}</Badge>
             {nation.group_name && <Badge variant="secondary">Group {nation.group_name}</Badge>}
             {nation.confederation && <Badge variant="secondary">{nation.confederation}</Badge>}
             {nation.fifa_ranking && <Badge variant="secondary">FIFA #{nation.fifa_ranking}</Badge>}

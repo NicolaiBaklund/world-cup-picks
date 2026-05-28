@@ -44,8 +44,7 @@ export function GroupTable({ groupName, standings }: GroupTableProps) {
                     className="flex items-center gap-2 hover:underline"
                   >
                     <span>{nation.flag}</span>
-                    <span className="hidden sm:inline">{nation.name}</span>
-                    <span className="sm:hidden">{nation.code}</span>
+                    <span>{nation.name}</span>
                   </Link>
                 </TableCell>
                 <TableCell className="text-center">{nation.played}</TableCell>

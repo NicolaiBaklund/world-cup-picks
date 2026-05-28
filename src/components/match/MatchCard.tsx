@@ -49,7 +49,7 @@ export function MatchCard({ match, compact, betLeagueId }: MatchCardProps) {
             <div className="flex items-center gap-2 flex-1 min-w-0">
               <span className="text-lg">{match.home_team_flag}</span>
               <span className={`truncate ${compact ? 'text-sm' : 'text-base'} font-medium`}>
-                {compact ? match.home_team_code : match.home_team_name}
+                {match.home_team_name}
               </span>
             </div>
 
@@ -69,7 +69,7 @@ export function MatchCard({ match, compact, betLeagueId }: MatchCardProps) {
             {/* Away team */}
             <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
               <span className={`truncate ${compact ? 'text-sm' : 'text-base'} font-medium text-right`}>
-                {compact ? match.away_team_code : match.away_team_name}
+                {match.away_team_name}
               </span>
               <span className="text-lg">{match.away_team_flag}</span>
             </div>

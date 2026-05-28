@@ -117,7 +117,7 @@ export function BetForm({ match }: BetFormProps) {
 
             <div className="flex items-center justify-center gap-6">
               <ScoreStepper
-                label={match.home_team_code}
+                label={match.home_team_name}
                 flag={match.home_team_flag}
                 value={homeScore}
                 onChange={setHomeScore}
@@ -125,7 +125,7 @@ export function BetForm({ match }: BetFormProps) {
               />
               <span className="text-2xl font-bold text-muted-foreground">–</span>
               <ScoreStepper
-                label={match.away_team_code}
+                label={match.away_team_name}
                 flag={match.away_team_flag}
                 value={awayScore}
                 onChange={setAwayScore}

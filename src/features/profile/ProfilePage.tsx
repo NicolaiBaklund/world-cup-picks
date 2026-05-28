@@ -124,13 +124,13 @@ export function ProfilePage() {
                 <CardContent className="p-3 flex items-center justify-between">
                   <div className="flex items-center gap-2 min-w-0">
                     <span>{bet.home_team_flag}</span>
-                    <span className="text-sm truncate">{bet.home_team_code} vs {bet.away_team_code}</span>
+                    <span className="text-sm truncate">{bet.home_team_name} vs {bet.away_team_name}</span>
                     <span>{bet.away_team_flag}</span>
                     <Badge variant="outline" className="text-xs">{bet.league_name}</Badge>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <span className="text-xs text-muted-foreground">
-                      {bet.predicted_winner === 'home' ? bet.home_team_code : bet.predicted_winner === 'away' ? bet.away_team_code : 'Draw'}
+                      {bet.predicted_winner === 'home' ? bet.home_team_flag : bet.predicted_winner === 'away' ? bet.away_team_flag : 'Draw'}
                     </span>
                     {bet.is_correct !== null && (
                       <Badge variant={bet.is_correct ? 'default' : 'secondary'}>

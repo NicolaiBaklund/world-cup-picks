@@ -10,6 +10,7 @@ export function winnerFromScore(home: number, away: number): BetPrediction {
 }
 
 interface ScoreStepperProps {
+  /** Team name — used for the accessible label only. */
   label: string
   flag?: string
   value: number
@@ -21,10 +22,7 @@ interface ScoreStepperProps {
 export function ScoreStepper({ label, flag, value, onChange, disabled, max = 99 }: ScoreStepperProps) {
   return (
     <div className="flex flex-col items-center gap-1">
-      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-        {flag && <span className="text-base">{flag}</span>}
-        <span className="font-medium">{label}</span>
-      </div>
+      {flag && <span className="text-xl leading-none" aria-label={label}>{flag}</span>}
       <div className="flex items-center gap-2">
         <Button
           type="button"
