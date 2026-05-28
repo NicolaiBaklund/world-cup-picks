@@ -193,9 +193,11 @@ export type Database = {
           home_team_name: string
           home_team_code: string
           home_team_flag: string
+          home_team_flag_url: string | null
           away_team_name: string
           away_team_code: string
           away_team_flag: string
+          away_team_flag_url: string | null
         }
         Relationships: []
       }
@@ -220,9 +222,11 @@ export type Database = {
           home_team_name: string
           home_team_code: string
           home_team_flag: string
+          home_team_flag_url: string | null
           away_team_name: string
           away_team_code: string
           away_team_flag: string
+          away_team_flag_url: string | null
           league_name: string
         }
         Relationships: []
@@ -234,6 +238,7 @@ export type Database = {
           name: string
           code: string
           flag: string
+          flag_url: string | null
           played: number
           won: number
           drawn: number
