@@ -14,7 +14,6 @@ export function CreateLeaguePage() {
   const [description, setDescription] = useState('')
   const [isPublic, setIsPublic] = useState(false)
   const [maxMembers, setMaxMembers] = useState('50')
-  const [pointsForCorrect, setPointsForCorrect] = useState('1')
   const navigate = useNavigate()
   const createLeague = useCreateLeague()
 
@@ -26,7 +25,6 @@ export function CreateLeaguePage() {
         description: description || undefined,
         is_public: isPublic,
         max_members: parseInt(maxMembers),
-        points_for_correct: parseInt(pointsForCorrect),
       })
       toast.success(`League created! Invite code: ${league.code}`)
       navigate(`/leagues/${league.id}`)
@@ -87,30 +85,21 @@ export function CreateLeaguePage() {
               </Select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="maxMembers">Max Members</Label>
-                <Input
-                  id="maxMembers"
-                  type="number"
-                  value={maxMembers}
-                  onChange={(e) => setMaxMembers(e.target.value)}
-                  min={2}
-                  max={500}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="points">Points per Correct</Label>
-                <Input
-                  id="points"
-                  type="number"
-                  value={pointsForCorrect}
-                  onChange={(e) => setPointsForCorrect(e.target.value)}
-                  min={1}
-                  max={10}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="maxMembers">Max Members</Label>
+              <Input
+                id="maxMembers"
+                type="number"
+                value={maxMembers}
+                onChange={(e) => setMaxMembers(e.target.value)}
+                min={2}
+                max={500}
+              />
             </div>
+
+            <p className="text-xs text-muted-foreground">
+              Scoring: <strong>3</strong> for exact scoreline, <strong>1</strong> for correct result, <strong>0</strong> for wrong.
+            </p>
 
             <Button type="submit" className="w-full" disabled={createLeague.isPending}>
               {createLeague.isPending ? 'Creating...' : 'Create League'}
