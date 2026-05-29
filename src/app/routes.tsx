@@ -15,6 +15,7 @@ import { LeaguesPage } from '@/features/leagues/LeaguesPage'
 import { CreateLeaguePage } from '@/features/leagues/CreateLeaguePage'
 import { JoinLeaguePage } from '@/features/leagues/JoinLeaguePage'
 import { LeagueDetailPage } from '@/features/leagues/LeagueDetailPage'
+import { LeagueSettingsPage } from '@/features/leagues/LeagueSettingsPage'
 import { ProfilePage } from '@/features/profile/ProfilePage'
 import { UserProfilePage } from '@/features/profile/UserProfilePage'
 import { StatsPage } from '@/features/stats/StatsPage'
@@ -48,6 +49,7 @@ export const routes: RouteObject[] = [
           { path: '/leagues/create', element: <CreateLeaguePage /> },
           { path: '/leagues/join/:code?', element: <JoinLeaguePage /> },
           { path: '/leagues/:id', element: <LeagueDetailPage /> },
+          { path: '/leagues/:id/settings', element: <LeagueSettingsPage /> },
           { path: '/profile', element: <ProfilePage /> },
           { path: '/profile/:id', element: <UserProfilePage /> },
           { path: '/stats', element: <StatsPage /> },

@@ -123,3 +123,67 @@ export function useJoinLeague() {
     },
   })
 }
+
+export function useUpdateLeague(id: string) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (updates: {
+      name?: string
+      description?: string | null
+      is_public?: boolean
+      max_members?: number
+      points_for_correct?: number
+    }) => {
+      const { data, error } = await supabase
+        .from('leagues')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single()
+      if (error) throw error
+      return data as League
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [LEAGUES_KEY] })
+    },
+  })
+}
+
+export function useDeleteLeague() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('leagues')
+        .delete()
+        .eq('id', id)
+      if (error) throw error
+      return id
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [LEAGUES_KEY] })
+    },
+  })
+}
+
+export function useLeaveLeague() {
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  return useMutation({
+    mutationFn: async (leagueId: string) => {
+      const { error } = await supabase
+        .from('league_members')
+        .delete()
+        .eq('league_id', leagueId)
+        .eq('user_id', user!.id)
+      if (error) throw error
+      return leagueId
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [LEAGUES_KEY] })
+    },
+  })
+}

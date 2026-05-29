@@ -57,9 +57,11 @@ export function LeagueDetailPage() {
               )}
             </div>
             {isCreator && (
-              <Button variant="ghost" size="icon">
-                <Settings className="h-4 w-4" />
-              </Button>
+              <Link to={`/leagues/${id}/settings`}>
+                <Button variant="ghost" size="icon" aria-label="League settings">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </Link>
             )}
           </div>
         </CardHeader>
