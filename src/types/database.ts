@@ -64,6 +64,7 @@ export type Database = {
           username: string
           display_name: string | null
           avatar_url: string | null
+          favorite_nation_id: string | null
           total_bets: number
           correct_bets: number
           total_points: number
@@ -84,8 +85,6 @@ export type Database = {
           is_public: boolean
           max_members: number
           allow_late_join: boolean
-          points_for_correct: number
-          points_for_wrong: number
           points_for_exact_score: number
           created_at: string
           updated_at: string

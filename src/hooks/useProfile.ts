@@ -44,7 +44,7 @@ export function useUpdateProfile() {
   const { user } = useAuth()
 
   return useMutation({
-    mutationFn: async (updates: { display_name?: string; avatar_url?: string }) => {
+    mutationFn: async (updates: { display_name?: string; avatar_url?: string; favorite_nation_id?: string | null }) => {
       const { data, error } = await supabase
         .from('profiles')
         .update(updates)

@@ -6,8 +6,10 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { NationFlag } from '@/components/nation/NationFlag'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useMyProfile, useUpdateProfile } from '@/hooks/useProfile'
 import { useAllMyBets } from '@/hooks/useBets'
+import { useAllNations } from '@/hooks/useNations'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
 
@@ -15,6 +17,7 @@ export function ProfilePage() {
   const { user } = useAuth()
   const { data: profile, isLoading } = useMyProfile()
   const { data: bets } = useAllMyBets()
+  const { data: nations } = useAllNations()
   const updateProfile = useUpdateProfile()
   const [editing, setEditing] = useState(false)
   const [displayName, setDisplayName] = useState('')
@@ -34,6 +37,8 @@ export function ProfilePage() {
     ? Math.round((profile.correct_bets / profile.total_bets) * 100)
     : 0
 
+  const favoriteNation = nations?.find((n) => n.id === profile.favorite_nation_id) ?? null
+
   const handleSave = async () => {
     try {
       await updateProfile.mutateAsync({ display_name: displayName })
@@ -41,6 +46,15 @@ export function ProfilePage() {
       setEditing(false)
     } catch {
       toast.error('Failed to update profile')
+    }
+  }
+
+  const handleFavoriteChange = async (nationId: string) => {
+    try {
+      await updateProfile.mutateAsync({ favorite_nation_id: nationId === '__none__' ? null : nationId })
+      toast.success('Favorite team updated')
+    } catch {
+      toast.error('Failed to update favorite team')
     }
   }
 
@@ -69,7 +83,17 @@ export function ProfilePage() {
                 </div>
               ) : (
                 <>
-                  <h1 className="text-2xl font-bold">{profile.display_name ?? profile.username}</h1>
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-2xl font-bold">{profile.display_name ?? profile.username}</h1>
+                    {favoriteNation && (
+                      <NationFlag
+                        url={favoriteNation.flag_url}
+                        emoji={favoriteNation.flag}
+                        name={favoriteNation.name}
+                        size="lg"
+                      />
+                    )}
+                  </div>
                   <p className="text-muted-foreground">@{profile.username}</p>
                 </>
               )}
@@ -84,6 +108,40 @@ export function ProfilePage() {
                 Edit
               </Button>
             )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Favorite team */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Favorite Team</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Pick a nation — you earn <span className="font-semibold text-foreground">double points</span> on every match they play.
+          </p>
+          <div className="flex items-center gap-3">
+            {favoriteNation && (
+              <NationFlag url={favoriteNation.flag_url} emoji={favoriteNation.flag} name={favoriteNation.name} size="lg" />
+            )}
+            <Select
+              value={profile.favorite_nation_id ?? '__none__'}
+              onValueChange={(v) => v != null && handleFavoriteChange(v)}
+            >
+              <SelectTrigger className="w-[240px]" disabled={updateProfile.isPending || !nations}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">No favorite</SelectItem>
+                {nations?.map((n) => (
+                  <SelectItem key={n.id} value={n.id}>
+                    <NationFlag url={n.flag_url} emoji={n.flag} name={n.name} size="sm" />
+                    {n.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>

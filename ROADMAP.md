@@ -64,8 +64,10 @@ Predict the scoreline of each match. Points awarded by accuracy tier:
 | Outcome | Points | Source field |
 |---------|--------|--------------|
 | Exact scoreline | 3 | `points_for_exact_score` |
-| Correct result, wrong score | 1 | `points_for_correct` |
-| Wrong | 0 | `points_for_wrong` |
+| Correct result, wrong score | 1 | hardcoded |
+| Wrong | 0 | hardcoded |
+
+Bets on a user's favorite nation (set on their profile) score **double** across all tiers.
 
 Winner (home/draw/away) is derived from the predicted score, so the existing `predicted_winner` column still feeds tendency scoring.
 
