@@ -28,7 +28,6 @@ function LeagueCard({ league, role }: { league: League; role?: string }) {
           <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
             <span>Code: <code className="font-mono bg-muted px-1 rounded">{league.code}</code></span>
             <span>Max: {league.max_members}</span>
-            <span>{league.points_for_correct}pt/correct</span>
           </div>
         </CardContent>
       </Card>

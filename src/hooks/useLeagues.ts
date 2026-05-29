@@ -80,7 +80,6 @@ export function useCreateLeague() {
       description?: string
       is_public: boolean
       max_members?: number
-      points_for_correct?: number
     }) => {
       const { data, error } = await supabase
         .from('leagues')
@@ -133,7 +132,6 @@ export function useUpdateLeague(id: string) {
       description?: string | null
       is_public?: boolean
       max_members?: number
-      points_for_correct?: number
     }) => {
       const { data, error } = await supabase
         .from('leagues')

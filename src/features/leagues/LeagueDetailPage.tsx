@@ -75,7 +75,6 @@ export function LeagueDetailPage() {
               </Button>
             </div>
             <Badge variant="outline">{league.is_public ? 'Public' : 'Private'}</Badge>
-            <Badge variant="secondary">{league.points_for_correct}pt / correct</Badge>
           </div>
         </CardContent>
       </Card>

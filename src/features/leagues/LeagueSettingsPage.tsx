@@ -23,7 +23,6 @@ export function LeagueSettingsPage() {
   const [description, setDescription] = useState('')
   const [isPublic, setIsPublic] = useState(false)
   const [maxMembers, setMaxMembers] = useState('50')
-  const [pointsForCorrect, setPointsForCorrect] = useState('1')
 
   // Seed form once league loads
   useEffect(() => {
@@ -32,7 +31,6 @@ export function LeagueSettingsPage() {
       setDescription(league.description ?? '')
       setIsPublic(league.is_public)
       setMaxMembers(String(league.max_members ?? 50))
-      setPointsForCorrect(String(league.points_for_correct ?? 1))
     }
   }, [league])
 
@@ -71,7 +69,6 @@ export function LeagueSettingsPage() {
         description: description || null,
         is_public: isPublic,
         max_members: parseInt(maxMembers),
-        points_for_correct: parseInt(pointsForCorrect),
       })
       toast.success('League settings saved')
       navigate(`/leagues/${id}`)
@@ -154,21 +151,6 @@ export function LeagueSettingsPage() {
                 min={2}
                 max={500}
               />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="points">Points for correct result</Label>
-              <Input
-                id="points"
-                type="number"
-                value={pointsForCorrect}
-                onChange={(e) => setPointsForCorrect(e.target.value)}
-                min={1}
-                max={10}
-              />
-              <p className="text-xs text-muted-foreground">
-                Exact scoreline always awards 3 points.
-              </p>
             </div>
 
             <Button type="submit" className="w-full" disabled={updateLeague.isPending}>
