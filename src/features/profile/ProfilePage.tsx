@@ -126,6 +126,10 @@ export function ProfilePage() {
               <NationFlag url={favoriteNation.flag_url} emoji={favoriteNation.flag} name={favoriteNation.name} size="lg" />
             )}
             <Select
+              items={[
+                { value: '__none__', label: 'No favorite' },
+                ...(nations?.map((n) => ({ value: n.id, label: n.name })) ?? []),
+              ]}
               value={profile.favorite_nation_id ?? '__none__'}
               onValueChange={(v) => v != null && handleFavoriteChange(v)}
             >

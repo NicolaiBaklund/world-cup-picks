@@ -74,7 +74,14 @@ export function CreateLeaguePage() {
 
             <div className="space-y-2">
               <Label>Visibility</Label>
-              <Select value={isPublic ? 'public' : 'private'} onValueChange={(v) => setIsPublic(v === 'public')}>
+              <Select
+                items={[
+                  { value: 'private', label: 'Private (invite code only)' },
+                  { value: 'public', label: 'Public (anyone can join)' },
+                ]}
+                value={isPublic ? 'public' : 'private'}
+                onValueChange={(v) => setIsPublic(v === 'public')}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
